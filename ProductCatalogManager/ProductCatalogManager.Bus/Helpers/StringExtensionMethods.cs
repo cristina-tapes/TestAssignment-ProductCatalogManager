@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace ProductCatalogManager.Controllers.Helpers
+namespace ProductCatalogManager.Bus.Helpers
 {
     public static class StringExtensionMethods
     {

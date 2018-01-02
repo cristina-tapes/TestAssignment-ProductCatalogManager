@@ -1,9 +1,7 @@
-﻿using ProductCatalogManager.Controllers.Helpers;
-using ProductCatalogManager.Models;
+﻿using ProductCatalogManager.Bus;
+using ProductCatalogManager.Bus.Models;
 using System;
-using System.Data.Entity;
 using System.IO;
-using System.Linq;
 using System.Net;
 using System.Web;
 using System.Web.Mvc;
@@ -12,15 +10,12 @@ namespace ProductCatalogManager.Controllers
 {
     public class ProductsController : Controller
     {
-        private ProductDBContext db = new ProductDBContext();
+        private ProductBus productBus = new ProductBus();
 
         // GET: Products
         public ActionResult Index(string searchString)
         {
-            var products = db.Products.ToList();
-            if (!String.IsNullOrEmpty(searchString))
-                products = products.Where(p => p.Name.Contains(searchString, StringComparison.OrdinalIgnoreCase)).ToList();
-            return View(products);
+            return View(productBus.GetProducts(searchString));
         }
 
         // GET: Products/Details/5
@@ -30,7 +25,7 @@ namespace ProductCatalogManager.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Product product = db.Products.Find(id);
+            var product = productBus.GetProduct(id.Value);
             if (product == null)
             {
                 return HttpNotFound();
@@ -38,7 +33,6 @@ namespace ProductCatalogManager.Controllers
             return View(product);
         }
 
-        // GET: Products/Create
         [Authorize]
         public ActionResult Create()
         {
@@ -46,8 +40,6 @@ namespace ProductCatalogManager.Controllers
         }
 
         // POST: Products/Create
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
-        // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [Authorize]
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -56,8 +48,7 @@ namespace ProductCatalogManager.Controllers
             if (ModelState.IsValid)
             {
                 product.Photo = GetProductPhotoFromRequest();
-                db.Products.Add(product);
-                db.SaveChanges();
+                productBus.Add(product);
                 return RedirectToAction("Index");
             }
 
@@ -72,7 +63,7 @@ namespace ProductCatalogManager.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Product product = db.Products.Find(id);
+            Product product = productBus.GetProduct(id.Value);
             if (product == null)
             {
                 return HttpNotFound();
@@ -81,8 +72,6 @@ namespace ProductCatalogManager.Controllers
         }
 
         // POST: Products/Edit/5
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
-        // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [Authorize]
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -92,13 +81,8 @@ namespace ProductCatalogManager.Controllers
             {
                 product.Photo = GetProductPhotoFromRequest();
 
-                Product uneditedProduct = db.Products.AsNoTracking().FirstOrDefault(p => p.Id == product.Id);
+                productBus.Update(product);
 
-                if (uneditedProduct.NotEquals(product))
-                {
-                    db.Entry(product).State = EntityState.Modified;
-                    db.SaveChanges();
-                }
                 return RedirectToAction("Index");
             }
             return View(product);
@@ -112,7 +96,7 @@ namespace ProductCatalogManager.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Product product = db.Products.Find(id);
+            Product product = productBus.GetProduct(id.Value);
             if (product == null)
             {
                 return HttpNotFound();
@@ -126,9 +110,7 @@ namespace ProductCatalogManager.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult DeleteConfirmed(int id)
         {
-            Product product = db.Products.Find(id);
-            db.Products.Remove(product);
-            db.SaveChanges();
+            productBus.Delete(id);
             return RedirectToAction("Index");
         }
 
@@ -136,24 +118,27 @@ namespace ProductCatalogManager.Controllers
         {
             if (disposing)
             {
-                db.Dispose();
+                productBus.Dispose();
             }
             base.Dispose(disposing);
         }
 
         public ActionResult RetrieveImage(int id)
         {
-            byte[] cover = db.Products.FirstOrDefault(p => p.Id == id)?.Photo;
+            byte[] cover = productBus.GetProduct(id).Photo;
 
-            if (cover != null)
-                return File(cover, "image/jpg");
+            if (cover == null)
+                return null;
 
-            return null;
+            return File(cover, "image/jpg");
         }
 
         private byte[] GetProductPhotoFromRequest()
         {
             HttpPostedFileBase photo = Request.Files["ProductPhoto"];
+
+            if (photo == null)
+                return new byte[0];
 
             BinaryReader reader = new BinaryReader(photo.InputStream);
             return reader.ReadBytes(photo.ContentLength);
@@ -161,8 +146,7 @@ namespace ProductCatalogManager.Controllers
 
         public FileContentResult ExportToExcel()
         {
-            var dataToExport = db.Products.Select(p => new { p.Id, p.Name, p.Price, p.LastUpdated });
-            var fileContent = ExcelExporter.ExportDataToExcel(dataToExport.ToList(), typeof(Product).Name);
+            var fileContent = productBus.ExportAsExcel();
             return new FileContentResult(fileContent, "application/vnd.ms-excel") { FileDownloadName = typeof(Product).Name + DateTime.Now.Ticks + ".xlsx" };
         }
     }

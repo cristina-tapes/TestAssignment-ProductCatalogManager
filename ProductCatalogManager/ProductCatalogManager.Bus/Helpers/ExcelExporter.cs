@@ -6,7 +6,7 @@ using System.Data;
 using System.IO;
 using DataTable = System.Data.DataTable;
 
-namespace ProductCatalogManager.Controllers.Helpers
+namespace ProductCatalogManager.Bus.Helpers
 {
     public class ExcelExporter
     {

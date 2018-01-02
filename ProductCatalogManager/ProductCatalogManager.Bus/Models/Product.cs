@@ -2,7 +2,7 @@
 using System.ComponentModel.DataAnnotations;
 using System.Data.Entity;
 
-namespace ProductCatalogManager.Models
+namespace ProductCatalogManager.Bus.Models
 {
     public class Product
     {
@@ -10,6 +10,7 @@ namespace ProductCatalogManager.Models
         [Required]
         public string Name { get; set; }
         public byte[] Photo { get; set; }
+        [Range(0.0, double.MaxValue)]
         public double Price { get; set; }
         [Display(Name = "Last Update Date")]
         [DataType(DataType.Date)]

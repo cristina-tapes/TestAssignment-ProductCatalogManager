@@ -1,12 +1,12 @@
-﻿using ProductCatalogManager.Models;
+﻿using ProductCatalogManager.Bus.Models;
 using System;
 using System.Linq;
 
-namespace ProductCatalogManager.Controllers.Helpers
+namespace ProductCatalogManager.Bus.Helpers
 {
     public static class ProductExtensionMethods
     {
-        public static bool Equals(this Product thisProduct, Product product)
+        public static bool IsEqualTo(this Product thisProduct, Product product)
         {
             if (product == null)
                 return false;
@@ -37,7 +37,7 @@ namespace ProductCatalogManager.Controllers.Helpers
 
         public static bool NotEquals(this Product thisProduct, Product product)
         {
-            return !thisProduct.Equals(product);
+            return !thisProduct.IsEqualTo(product);
         }
     }
 }
