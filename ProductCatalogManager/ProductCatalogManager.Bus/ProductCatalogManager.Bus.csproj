@@ -54,7 +54,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Bus\ProductBus.cs" />
+    <Compile Include="Bus\ProductService.cs" />
     <Compile Include="Helpers\ExcelExporter.cs" />
     <Compile Include="Helpers\ProductExtensionMethods.cs" />
     <Compile Include="Helpers\StringExtensionMethods.cs" />

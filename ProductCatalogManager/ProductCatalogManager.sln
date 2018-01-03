@@ -9,6 +9,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ProductCatalogManager.Tests
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ProductCatalogManager.Bus", "ProductCatalogManager.Bus\ProductCatalogManager.Bus.csproj", "{DA4EBE88-9529-4C76-BA74-7D2AA3092FB6}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ProductCatalogManager.Bus.Tests", "ProductCatalogManager.Bus.Tests\ProductCatalogManager.Bus.Tests.csproj", "{9CFF6867-B87D-4115-9820-8897438058DD}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -27,6 +29,10 @@ Global
 		{DA4EBE88-9529-4C76-BA74-7D2AA3092FB6}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{DA4EBE88-9529-4C76-BA74-7D2AA3092FB6}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{DA4EBE88-9529-4C76-BA74-7D2AA3092FB6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9CFF6867-B87D-4115-9820-8897438058DD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9CFF6867-B87D-4115-9820-8897438058DD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9CFF6867-B87D-4115-9820-8897438058DD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9CFF6867-B87D-4115-9820-8897438058DD}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
