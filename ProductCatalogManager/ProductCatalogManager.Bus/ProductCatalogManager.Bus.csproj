@@ -9,7 +9,7 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>ProductCatalogManager.Bus</RootNamespace>
     <AssemblyName>ProductCatalogManager.Bus</AssemblyName>
-    <TargetFrameworkVersion>v4.6.2</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
     <TargetFrameworkProfile />
@@ -58,6 +58,7 @@
     <Compile Include="Helpers\ExcelExporter.cs" />
     <Compile Include="Helpers\ProductExtensionMethods.cs" />
     <Compile Include="Helpers\StringExtensionMethods.cs" />
+    <Compile Include="ModelsDC\ProductDC.cs" />
     <Compile Include="Models\Product.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

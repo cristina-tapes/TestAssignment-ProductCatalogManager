@@ -1,5 +1,6 @@
 ﻿using ProductCatalogManager.Bus.Helpers;
 using ProductCatalogManager.Bus.Models;
+using ProductCatalogManager.Bus.ModelsDC;
 using System;
 using System.Collections.Generic;
 using System.Data.Entity;
@@ -11,12 +12,19 @@ namespace ProductCatalogManager.Bus
     {
         private ProductDBContext db = new ProductDBContext();
 
-        public List<Product> GetProducts(string filter)
+        public IEnumerable<Product> GetProducts(string filter = "")
         {
-            var products = db.Products.ToList();
-            if (!String.IsNullOrEmpty(filter))
-                products = products.Where(p => p.Name.Contains(filter, StringComparison.OrdinalIgnoreCase)).ToList();
-            return products;
+            var products = db.Products;
+
+            if (!string.IsNullOrEmpty(filter))
+                return products.Where(p => p.Name.Contains(filter, StringComparison.OrdinalIgnoreCase)).ToList();
+
+            return products.ToList();
+        }
+
+        public IEnumerable<ProductDC> GetProductsDC()
+        {
+            return db.Products.AsEnumerable().Select(p => new ProductDC(p));
         }
 
         public Product GetProduct(int id)
@@ -53,7 +61,7 @@ namespace ProductCatalogManager.Bus
 
         public byte[] ExportAsExcel()
         {
-            var dataToExport = db.Products.Select(p => new { p.Id, p.Name, p.Price, p.LastUpdated });
+            var dataToExport = db.Products.AsEnumerable().Select(p => new ProductDC(p));
             return ExcelExporter.ExportDataToExcel(dataToExport.ToList(), typeof(Product).Name);
         }
 

@@ -22,14 +22,13 @@ namespace ProductCatalogManager.Controllers
         public ActionResult Details(int? id)
         {
             if (id == null)
-            {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-            }
+
             var product = productBus.GetProduct(id.Value);
+
             if (product == null)
-            {
                 return HttpNotFound();
-            }
+
             return View(product);
         }
 
@@ -60,14 +59,13 @@ namespace ProductCatalogManager.Controllers
         public ActionResult Edit(int? id)
         {
             if (id == null)
-            {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-            }
+
             Product product = productBus.GetProduct(id.Value);
+
             if (product == null)
-            {
                 return HttpNotFound();
-            }
+
             return View(product);
         }
 
@@ -93,14 +91,13 @@ namespace ProductCatalogManager.Controllers
         public ActionResult Delete(int? id)
         {
             if (id == null)
-            {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-            }
+
             Product product = productBus.GetProduct(id.Value);
+
             if (product == null)
-            {
                 return HttpNotFound();
-            }
+
             return View(product);
         }
 
@@ -120,6 +117,7 @@ namespace ProductCatalogManager.Controllers
             {
                 productBus.Dispose();
             }
+
             base.Dispose(disposing);
         }
 
