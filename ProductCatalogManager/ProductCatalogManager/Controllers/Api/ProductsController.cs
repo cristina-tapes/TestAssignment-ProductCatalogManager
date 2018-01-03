@@ -7,8 +7,12 @@ namespace ProductCatalogManager.Controllers.Api
     [RoutePrefix("api/products")]
     public class ProductsController : ApiController
     {
-        private ProductService productService = new ProductService();
+        private IProductService _productService;
 
+        public ProductsController(IProductService productService)
+        {
+            _productService = productService;
+        }
         // GET: api/Products
         /// <summary>
         /// Get the list of all products without photos
@@ -16,7 +20,7 @@ namespace ProductCatalogManager.Controllers.Api
         /// <returns>list of products without photos</returns>
         public IEnumerable<object> Get()
         {
-            return productService.GetProductsDC();
+            return _productService.GetProductsDC();
         }
 
         // GET: api/Products/5
@@ -27,7 +31,7 @@ namespace ProductCatalogManager.Controllers.Api
         /// <returns>product</returns>
         public object Get(int id)
         {
-            return productService.GetProduct(id);
+            return _productService.GetProduct(id);
         }
     }
 }

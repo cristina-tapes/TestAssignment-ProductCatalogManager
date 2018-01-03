@@ -10,12 +10,17 @@ namespace ProductCatalogManager.Controllers
 {
     public class ProductsController : Controller
     {
-        private ProductService productService = new ProductService();
+        private IProductService _productService;
+
+        public ProductsController(IProductService productService)
+        {
+            _productService = productService;
+        }
 
         // GET: Products
         public ActionResult Index(string searchString)
         {
-            return View(productService.GetProducts(searchString));
+            return View(_productService.GetProducts(searchString));
         }
 
         // GET: Products/Details/5
@@ -24,7 +29,7 @@ namespace ProductCatalogManager.Controllers
             if (id == null)
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
 
-            var product = productService.GetProduct(id.Value);
+            var product = _productService.GetProduct(id.Value);
 
             if (product == null)
                 return HttpNotFound();
@@ -47,7 +52,7 @@ namespace ProductCatalogManager.Controllers
             if (ModelState.IsValid)
             {
                 product.Photo = GetProductPhotoFromRequest();
-                productService.Add(product);
+                _productService.Add(product);
                 return RedirectToAction("Index");
             }
 
@@ -61,7 +66,7 @@ namespace ProductCatalogManager.Controllers
             if (id == null)
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
 
-            Product product = productService.GetProduct(id.Value);
+            Product product = _productService.GetProduct(id.Value);
 
             if (product == null)
                 return HttpNotFound();
@@ -79,7 +84,7 @@ namespace ProductCatalogManager.Controllers
             {
                 product.Photo = GetProductPhotoFromRequest();
 
-                productService.Update(product);
+                _productService.Update(product);
 
                 return RedirectToAction("Index");
             }
@@ -93,7 +98,7 @@ namespace ProductCatalogManager.Controllers
             if (id == null)
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
 
-            Product product = productService.GetProduct(id.Value);
+            Product product = _productService.GetProduct(id.Value);
 
             if (product == null)
                 return HttpNotFound();
@@ -107,23 +112,13 @@ namespace ProductCatalogManager.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult DeleteConfirmed(int id)
         {
-            productService.Delete(id);
+            _productService.Delete(id);
             return RedirectToAction("Index");
-        }
-
-        protected override void Dispose(bool disposing)
-        {
-            if (disposing)
-            {
-                productService.Dispose();
-            }
-
-            base.Dispose(disposing);
         }
 
         public ActionResult RetrieveImage(int id)
         {
-            byte[] cover = productService.GetProduct(id).Photo;
+            byte[] cover = _productService.GetProduct(id).Photo;
 
             if (cover == null)
                 return null;
@@ -144,7 +139,7 @@ namespace ProductCatalogManager.Controllers
 
         public FileContentResult ExportToExcel()
         {
-            var fileContent = productService.ExportAsExcel();
+            var fileContent = _productService.ExportAsExcel();
             return new FileContentResult(fileContent, "application/vnd.ms-excel") { FileDownloadName = typeof(Product).Name + DateTime.Now.Ticks + ".xlsx" };
         }
     }

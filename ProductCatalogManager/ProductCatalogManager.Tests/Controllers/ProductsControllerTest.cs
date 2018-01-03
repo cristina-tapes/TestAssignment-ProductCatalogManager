@@ -1,4 +1,5 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+using ProductCatalogManager.Bus;
 using ProductCatalogManager.Controllers;
 using System.Net;
 using System.Web.Mvc;
@@ -11,7 +12,7 @@ namespace ProductCatalogManager.Tests.Controllers
         [TestMethod]
         public void Index()
         {
-            ProductsController controller = new ProductsController();
+            ProductsController controller = new ProductsController(new ProductService());
 
             ViewResult result = controller.Index("") as ViewResult;
 
@@ -21,7 +22,7 @@ namespace ProductCatalogManager.Tests.Controllers
         [TestMethod]
         public void Details_NullId_ReturnsBadRequest()
         {
-            ProductsController controller = new ProductsController();
+            ProductsController controller = new ProductsController(new ProductService());
 
             var result = controller.Details(null);
 
@@ -32,7 +33,7 @@ namespace ProductCatalogManager.Tests.Controllers
         [TestMethod]
         public void Details_UnexistingId_ReturnsHttpNotFound()
         {
-            ProductsController controller = new ProductsController();
+            ProductsController controller = new ProductsController(new ProductService());
 
             var result = controller.Details(1);
 
@@ -42,7 +43,7 @@ namespace ProductCatalogManager.Tests.Controllers
         [TestMethod]
         public void Create()
         {
-            ProductsController controller = new ProductsController();
+            ProductsController controller = new ProductsController(new ProductService());
 
             ViewResult result = controller.Create() as ViewResult;
 

@@ -8,7 +8,7 @@ using System.Linq;
 
 namespace ProductCatalogManager.Bus
 {
-    public class ProductService : IDisposable
+    public class ProductService : IProductService, IDisposable
     {
         private ProductDBContext dbContext;
 
