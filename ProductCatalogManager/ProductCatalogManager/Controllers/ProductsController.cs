@@ -128,13 +128,19 @@ namespace ProductCatalogManager.Controllers
 
         private byte[] GetProductPhotoFromRequest()
         {
-            HttpPostedFileBase photo = Request.Files["ProductPhoto"];
+            HttpPostedFileBase requestFile = Request.Files["ProductPhoto"];
 
-            if (photo == null)
+            if (requestFile == null)
                 return new byte[0];
 
-            BinaryReader reader = new BinaryReader(photo.InputStream);
-            return reader.ReadBytes(photo.ContentLength);
+            byte[] photo;
+
+            using (BinaryReader reader = new BinaryReader(requestFile.InputStream))
+            {
+                photo = reader.ReadBytes(requestFile.ContentLength);
+            }
+            
+            return photo;
         }
 
         public FileContentResult ExportToExcel()
