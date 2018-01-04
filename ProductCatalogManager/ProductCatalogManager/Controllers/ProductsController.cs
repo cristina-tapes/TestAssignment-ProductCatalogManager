@@ -29,7 +29,7 @@ namespace ProductCatalogManager.Controllers
             if (id == null)
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
 
-            var product = _productService.GetProduct(id.Value);
+            Product product = _productService.GetProduct(id.Value);
 
             if (product == null)
                 return HttpNotFound();
@@ -118,7 +118,7 @@ namespace ProductCatalogManager.Controllers
 
         public ActionResult RetrieveImage(int id)
         {
-            var cover = _productService.GetProduct(id).Photo;
+            byte[] cover = _productService.GetProduct(id).Photo;
 
             if (cover == null)
                 return null;
@@ -141,8 +141,8 @@ namespace ProductCatalogManager.Controllers
 
         public FileContentResult ExportToExcel()
         {
-            var fileContent = _productService.ExportAsExcel();
-            var fileDownloadName = typeof(Product).Name + DateTime.Now.Ticks + ".xlsx";
+            byte[] fileContent = _productService.ExportAsExcel();
+            string fileDownloadName = typeof(Product).Name + DateTime.Now.Ticks + ".xlsx";
 
             return
                 new FileContentResult(fileContent, "application/vnd.ms-excel")
