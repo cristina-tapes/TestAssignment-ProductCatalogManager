@@ -5,12 +5,13 @@ using System;
 using System.Collections.Generic;
 using System.Data.Entity;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace ProductCatalogManager.Bus
 {
     public class ProductService : IProductService, IDisposable
     {
-        private ProductDBContext dbContext;
+        private ProductDBContext _dbContext;
 
         public ProductService() : this(new ProductDBContext())
         {
@@ -18,65 +19,86 @@ namespace ProductCatalogManager.Bus
 
         public ProductService(ProductDBContext dbContext)
         {
-            this.dbContext = dbContext;
+            _dbContext = dbContext;
         }
 
-        public IEnumerable<Product> GetProducts(string filter = "")
+        public List<Product> GetProducts(string filter = "")
         {
-            var products = dbContext.Products;
+            var products = _dbContext.Products.ToList();
 
             if (!string.IsNullOrEmpty(filter))
-                return products.Where(p => p.Name.Contains(filter, StringComparison.OrdinalIgnoreCase)).ToList();
+                return products
+                        .Where(p => p.Name.Contains(filter, StringComparison.OrdinalIgnoreCase))
+                        .ToList();
 
-            return products.ToList();
+            return products;
         }
 
-        public IEnumerable<ProductDC> GetProductsDC()
+        public Task<List<ProductDC>> GetProductsDCAsync()
         {
-            return dbContext.Products.AsEnumerable().Select(p => new ProductDC(p));
+            return _dbContext.Products
+                .Select(p => new ProductDC
+                {
+                    Id = p.Id,
+                    LastUpdated = p.LastUpdated,
+                    Name = p.Name,
+                    Price = p.Price
+                })
+                .ToListAsync();
         }
 
         public Product GetProduct(int id)
         {
-            return dbContext.Products.FirstOrDefault(p => p.Id == id);
+            return _dbContext.Products.FirstOrDefault(p => p.Id == id);
+        }
+
+        public Task<Product> GetProductAsync(int id)
+        {
+            return _dbContext.Products.FirstOrDefaultAsync(p => p.Id == id);
         }
 
         public void Add(Product product)
         {
-            dbContext.Products.Add(product);
-            dbContext.SaveChanges();
+            _dbContext.Products.Add(product);
+            _dbContext.SaveChanges();
         }
 
         public void Update(Product product)
         {
-            Product uneditedProduct = dbContext.Products.AsNoTracking().FirstOrDefault(p => p.Id == product.Id);
+            var uneditedProduct = _dbContext.Products
+                                    .AsNoTracking()
+                                    .FirstOrDefault(p => p.Id == product.Id);
 
             if (product.Photo.Length == 0)
                 product.Photo = uneditedProduct.Photo;
 
             if (uneditedProduct.NotEquals(product))
             {
-                dbContext.Entry(product).State = EntityState.Modified;
-                dbContext.SaveChanges();
+                _dbContext.Entry(product).State = EntityState.Modified;
+                _dbContext.SaveChanges();
             }
         }
 
         public void Delete(int id)
         {
-            Product product = dbContext.Products.Find(id);
-            dbContext.Products.Remove(product);
-            dbContext.SaveChanges();
+            var product = _dbContext.Products.Find(id);
+            _dbContext.Products.Remove(product);
+            _dbContext.SaveChanges();
         }
 
         public byte[] ExportAsExcel()
         {
-            var dataToExport = dbContext.Products.AsEnumerable().Select(p => new ProductDC(p));
-            return ExcelExporter.ExportDataToExcel(dataToExport.ToList(), typeof(Product).Name);
+            var dataToExport = _dbContext.Products
+                                .AsEnumerable()
+                                .Select(p => p.ToProductDC())
+                                .ToList();
+
+            return ExcelExporter.ExportDataToExcel(dataToExport, typeof(Product).Name);
         }
 
         public void Dispose()
         {
-            dbContext.Dispose();
+            _dbContext.Dispose();
         }
     }
 }

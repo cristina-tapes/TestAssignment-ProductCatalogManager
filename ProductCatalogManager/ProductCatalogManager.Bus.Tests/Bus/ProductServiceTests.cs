@@ -75,7 +75,7 @@ namespace ProductCatalogManager.Bus.Tests
         }
 
         [TestMethod]
-        public void GetProductsDC()
+        public async void GetProductsDC()
         {
             var productsInDB = new List<Product>
             {
@@ -92,7 +92,7 @@ namespace ProductCatalogManager.Bus.Tests
             mockContext.Setup(c => c.Products).Returns(mockSet.Object);
 
             var service = new ProductService(mockContext.Object);
-            var productsDC = service.GetProductsDC();
+            var productsDC = await service.GetProductsDCAsync();
 
             Assert.AreEqual(1, productsDC.Count());
             Assert.AreEqual(productsInDB.ElementAt(0).Name, productsDC.ElementAt(0).Name);

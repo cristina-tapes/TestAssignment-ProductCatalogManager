@@ -1,4 +1,5 @@
 ﻿using ProductCatalogManager.Bus.Models;
+using ProductCatalogManager.Bus.ModelsDC;
 using System;
 using System.Linq;
 
@@ -38,6 +39,17 @@ namespace ProductCatalogManager.Bus.Helpers
         public static bool NotEquals(this Product thisProduct, Product product)
         {
             return !thisProduct.IsEqualTo(product);
+        }
+
+        public static ProductDC ToProductDC(this Product product)
+        {
+            return new ProductDC()
+            {
+                Id = product.Id,
+                Name = product.Name,
+                Price = product.Price,
+                LastUpdated = product.LastUpdated
+            };
         }
     }
 }

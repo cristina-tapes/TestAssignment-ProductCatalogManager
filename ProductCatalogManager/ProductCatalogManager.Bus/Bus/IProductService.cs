@@ -1,16 +1,19 @@
 ﻿using ProductCatalogManager.Bus.Models;
 using ProductCatalogManager.Bus.ModelsDC;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace ProductCatalogManager.Bus
 {
     public interface IProductService
     {
-        IEnumerable<Product> GetProducts(string filter = "");
+        List<Product> GetProducts(string filter = "");
 
-        IEnumerable<ProductDC> GetProductsDC();
+        Task<List<ProductDC>> GetProductsDCAsync();
 
         Product GetProduct(int id);
+
+        Task<Product> GetProductAsync(int id);
 
         void Add(Product product);
 

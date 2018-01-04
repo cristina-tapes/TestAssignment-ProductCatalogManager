@@ -10,7 +10,7 @@ namespace ProductCatalogManager.Tests.Controllers
         [TestMethod]
         public void Login()
         {
-            AccountController controller = new AccountController();
+            AccountController controller = new AccountController(null, null);
 
             ViewResult result = controller.Login(null) as ViewResult;
 
@@ -20,7 +20,7 @@ namespace ProductCatalogManager.Tests.Controllers
         [TestMethod]
         public void Register()
         {
-            AccountController controller = new AccountController();
+            AccountController controller = new AccountController(null, null);
 
             ViewResult result = controller.Register() as ViewResult;
 

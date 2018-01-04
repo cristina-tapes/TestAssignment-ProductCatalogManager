@@ -118,7 +118,7 @@ namespace ProductCatalogManager.Controllers
 
         public ActionResult RetrieveImage(int id)
         {
-            byte[] cover = _productService.GetProduct(id).Photo;
+            var cover = _productService.GetProduct(id).Photo;
 
             if (cover == null)
                 return null;
@@ -133,20 +133,22 @@ namespace ProductCatalogManager.Controllers
             if (requestFile == null)
                 return new byte[0];
 
-            byte[] photo;
-
             using (BinaryReader reader = new BinaryReader(requestFile.InputStream))
             {
-                photo = reader.ReadBytes(requestFile.ContentLength);
+                return reader.ReadBytes(requestFile.ContentLength);
             }
-            
-            return photo;
         }
 
         public FileContentResult ExportToExcel()
         {
             var fileContent = _productService.ExportAsExcel();
-            return new FileContentResult(fileContent, "application/vnd.ms-excel") { FileDownloadName = typeof(Product).Name + DateTime.Now.Ticks + ".xlsx" };
+            var fileDownloadName = typeof(Product).Name + DateTime.Now.Ticks + ".xlsx";
+
+            return
+                new FileContentResult(fileContent, "application/vnd.ms-excel")
+                {
+                    FileDownloadName = fileDownloadName
+                };
         }
     }
 }

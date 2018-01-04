@@ -1,6 +1,14 @@
-﻿using Microsoft.Practices.Unity;
+﻿using Microsoft.AspNet.Identity;
+using Microsoft.AspNet.Identity.EntityFramework;
+using Microsoft.AspNet.Identity.Owin;
+using Microsoft.Owin.Security;
+using Microsoft.Practices.Unity;
 using ProductCatalogManager.Bus;
+using ProductCatalogManager.Controllers;
+using ProductCatalogManager.Models;
 using System;
+using System.Data.Entity;
+using System.Web;
 
 namespace ProductCatalogManager.App_Start
 {
@@ -39,6 +47,27 @@ namespace ProductCatalogManager.App_Start
             // container.RegisterType<IProductRepository, ProductRepository>();
 
             container.RegisterType<IProductService, ProductService>();
+            container.RegisterType<DbContext, ApplicationDbContext>(new HierarchicalLifetimeManager());
+            container.RegisterType<UserManager<ApplicationUser>>(new HierarchicalLifetimeManager());
+            container.RegisterType<IUserStore<ApplicationUser>, UserStore<ApplicationUser>>(new HierarchicalLifetimeManager());
+            container.RegisterType<AccountController>(new InjectionConstructor());
+            container.RegisterType<IAuthenticationManager>(
+                new InjectionFactory(
+                    o => System.Web.HttpContext.Current.GetOwinContext().Authentication
+                )
+            );
+
+            container.RegisterType<ApplicationSignInManager>(
+                new InjectionFactory(
+                    o => System.Web.HttpContext.Current.GetOwinContext().Get<ApplicationSignInManager>()
+                )
+            );
+
+            container.RegisterType<ApplicationUserManager>(
+                    new InjectionFactory(
+                        o => System.Web.HttpContext.Current.GetOwinContext().GetUserManager<ApplicationUserManager>()
+                )
+           );
         }
     }
 }
